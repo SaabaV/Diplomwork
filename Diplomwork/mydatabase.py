@@ -1,6 +1,67 @@
 import mysql.connector
 import random
 import configparser
+from sqlalchemy import create_engine, Column, Integer, String, TIMESTAMP
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+from datetime import datetime
+
+# Создание базового класса для определения моделей
+Base = declarative_base()
+
+
+class SearchHistory(Base):
+    __tablename__ = 'search_history'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(Integer)
+    genre_search = Column(String(255))
+    genre_answer = Column(String(255))
+    runtime_search = Column(String(255))
+    runtime_answer = Column(String(255))
+    cast_search = Column(String(255))
+    cast_answer = Column(String(255))
+    directors_search = Column(String(255))
+    directors_answer = Column(String(255))
+    imdb_rating_search = Column(String(255))
+    imdb_rating_answer = Column(String(255))
+    year_search = Column(Integer)
+    year_answer = Column(Integer)
+    timestamp = Column(TIMESTAMP)
+
+# Создание соединения с базой данных
+engine = create_engine('mysql://root:Jf223nbl1024N!vlad@localhost/movie')
+
+# Создание таблицы (если её нет)
+Base.metadata.create_all(engine)
+
+# Создание сессии
+Session = sessionmaker(bind=engine)
+session = Session()
+
+
+def insert_search_history(user_id, genre_search, genre_answer, runtime_search, runtime_answer, cast_search, cast_answer, directors_search, directors_answer, imdb_rating_search, imdb_rating_answer, year_search, year_answer):
+    new_search = SearchHistory(
+        user_id=user_id,
+        genre_search=genre_search,
+        genre_answer=genre_answer,
+        runtime_search=runtime_search,
+        runtime_answer=runtime_answer,
+        cast_search=cast_search,
+        cast_answer=cast_answer,
+        directors_search=directors_search,
+        directors_answer=directors_answer,
+        imdb_rating_search=imdb_rating_search,
+        imdb_rating_answer=imdb_rating_answer,
+        year_search=year_search,
+        year_answer=year_answer,
+        timestamp=datetime.now()
+    )
+
+    session.add(new_search)
+    session.commit()
+
+    session.close()
 
 
 class DatabaseManager:

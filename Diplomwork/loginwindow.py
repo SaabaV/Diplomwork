@@ -59,16 +59,16 @@ class LoginWindow(QMainWindow):
         username = self.username_input.text()
         password = self.password_input.text()
 
-        cursor.execute("SELECT * FROM movies_users WHERE username = %s", (username,))
+        cursor.execute("SELECT user_id, password FROM movies_users WHERE username = %s", (username,))
         user_data = cursor.fetchone()
 
         if user_data:
-            hashed_password = user_data[2].encode('utf-8')
-            if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
-                print("Successful login.")
+            user_id, hashed_password = user_data
+            if bcrypt.checkpw(password.encode('utf-8'), hashed_password.encode('utf-8')):
+                print("Successful login. User ID:", type(user_id), user_id)
                 db_manager = DatabaseManager(host="localhost", user="root", password="Jf223nbl1024N!vlad",
                                              database="movie")
-                self.search_window = SearchWindow(user=User(*user_data), db_manager=db_manager)
+                self.search_window = SearchWindow(user=User(user_id, username, password), db_manager=db_manager)
                 self.search_window.show()
                 self.close()
                 return

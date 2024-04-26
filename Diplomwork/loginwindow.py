@@ -6,14 +6,17 @@ import mysql.connector
 from user_module import User
 from movie_window import SearchWindow
 from mydatabase import DatabaseManager
+import configparser
+
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Jf223nbl1024N!vlad",
-    database="movie",
-    port=3306
-)
+        host=config['database']['host'],
+        user=config['database']['user'],
+        password=config['database']['password'],
+        database=config['database']['database']
+    )
 cursor = db.cursor()
 
 
